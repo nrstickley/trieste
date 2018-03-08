@@ -4,9 +4,10 @@ import copy as _copy
 import time as _time
 import getpass as _getpass
 import types as _types
+from sys import stderr as _stderr
 
 
-__version__ = '0.1.0'
+__version__ = '0.1.1'
 
 
 # detect whether or not we are running in IPython
@@ -16,9 +17,13 @@ except NameError:
     _ipy = None
 
 
-# This is used to keep track of the number of untitled objects.
+# This is used to keep track of the number of untitled objects in this session.
 # Untitled objects are given names based upon the order in which they are created.
 _n_untitled = 1
+
+
+def print_err(*args, **kwargs):
+    print(*args, file=_stderr, **kwargs)
 
 
 def numpy_version_tuple():
@@ -89,14 +94,14 @@ def check_compatibility(input_file):
     my_python_version = python_version_tuple()
 
     if my_python_version < file_python_version:
-        raise Warning(f"{name} was created with a newer version of Python.")
+        print_err(f"Warning: {name} was created with a newer version of Python.")
 
     file_numpy_version = metadata['numpy_version']
 
     my_numpy_version = numpy_version_tuple()
 
     if my_numpy_version < file_numpy_version:
-        raise Warning(f"'{name}' was created using a newer version of NumPy.")
+        print_err(f"Warning: '{name}' was created using a newer version of NumPy.")
 
 
 def save(filename, metadata, *objects):
