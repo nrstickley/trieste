@@ -1,0 +1,169 @@
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8"></meta>
+  <meta http-equiv="Content-Style-Type" content="text/css"></meta>
+  <meta name="generator" content="pandoc"></meta>
+  <title></title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="./linux.css" type="text/css"></link>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_HTML" type="text/javascript"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+  <script src="scripts_and_styles/jquery.key.js"></script>
+  <script src="scripts_and_styles/fabric.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_HTML"></script>
+  <script>
+  $(document).ready(function(){
+      $(".show").click(function(event){
+          $('#' + event.target.id + '-').slideToggle(300);
+      });
+  
+      $("[id$=-]").addClass("hidden");
+  
+      $(".comment").click(function(event){
+          var id = '#' + event.target.id + '-';
+          $(id).addClass("comment-content");
+          $(id).toggle(50);
+      });
+  
+      $("div.sourceCode").has("pre.hidden").addClass("hidden");
+  
+      $("div.sourceCode > pre.hidden").removeClass("hidden");
+  
+      $(".new").css('color', 'blue');
+  	$(".old").css('color', 'red');
+  	$(".old").css('text-decoration', 'line-through');
+  });
+  
+  $(document).key("n", function(){
+  	$(".old").hide();
+  	$(".new").show();
+  	$(".new").css('color', '');
+  	$(".new").css('text-decoration', '');
+  });
+  $(document).key("o", function(){
+  	$(".new").hide();
+  	$(".old").show();
+  	$(".old").css('color', '');
+  	$(".old").css('text-decoration', '');
+  });
+  $(document).key("d", function(){
+  	$(".old").show();
+      $(".new").show();
+  	$(".new").css('color', 'blue');
+  	$(".old").css('color', 'red');
+  	$(".old").css('text-decoration', 'line-through');
+  });
+  
+  </script>
+  
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+        processEscapes: true
+      }
+    });
+  </script>
+</head>
+<body>
+<h1 id="introducing-trieste">Introducing Trieste</h1>
+<p>Trieste is a data interchange and archive format that facilitates documentation of data, data provenance tracking, and forensic analysis. If any of the following scenarios sound vaguely familiar, you may benefit from using Trieste:</p>
+<div class="note">
+<h3 id="scenario-i">Scenario I</h3>
+<p>While rushing to meet the deadline, you need to send some data to a colleague. You quickly make an ASCII file containing the requested data, using an interactive Python session (IPython). You don’t expect that you will need to create a similar table in the foreseeable future, and you are <em>rushing</em>, so you don’t take the time to write a script to automate the process. You simply send the file and forget about it. A few months later, you need to create a similar table from slightly different input data. You wish that you had at taken some notes, regarding how you produced the table so that you didn’t have to start over from scratch.</p>
+</div>
+<div class="note">
+<h3 id="scenario-ii">Scenario II</h3>
+<p>A colleague sends you a FITS file containing data that you would like to use. The file was created by your colleague’s friend, who received the file from someone else, but he can’t remember who created the file originally. You have been told that the file was originally part of a larger set of files, which included some documentation, but the documentation has evidently been lost. You spend a great deal of time inspecting the content of the FITS file in order to understand it. You would like to ask the file’s creator a question, but you can’t.</p>
+</div>
+<div class="note">
+<h3 id="scenario-iii">Scenario III</h3>
+<p>You need to produce thousands of multi-layer images of varying size and would like to put all of the images into a single file. You are frustrated because FITS doesn’t allow you to easily group sets of extensions. The layers of each image consist of different data types ($ 64$ bit floats and $32$ bit integers) and the different layers have different metadata, so storing the images in multi-dimensional arrays within a FITS file won’t work. Furthermore, you don’t want to store thousands of FITS files in a .zip or .tar file because it is highly inconvenient for the recipient of the files to manually extract the data and then load it. This approach would also tax the file system because thousands of individual files would need to be created each time a new zip archive is loaded. You have heard that the HDF$5$ format could handle your use-case, but you would have to learn to create HDF$5$ files and explain to the recipient how to load the files. There must be a better way to do this!</p>
+</div>
+<h2 id="examples">Examples</h2>
+<p>Here are some examples to illustrate what Trieste is and what it does:</p>
+<ul>
+<li><a href="./examples/Trieste-General-Demo.html" target="_blank">Example I: General Usage</a></li>
+<li><a href="./examples/Collection-demo.html" target="_blank">Example II: Collections</a></li>
+<li><a href="./examples/Trieste-Collection-Storing-FITS-files.html" target="_blank">Example III: Storing Many FITS Images</a></li>
+</ul>
+<h2 id="installing-trieste">Installing Trieste</h2>
+<p>The easiest way to install Trieste is by using <code>pip</code>:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="ex">pip</span> install trieste</code></pre></div>
+<p>Note that Trieste will only work with Python $3.6$ or newer. If you have multiple Python installations, you may have to specify <code>pip3.6</code>:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="ex">pip3.6</span> install trieste</code></pre></div>
+<p>You can also <a href="https://github.com/nrstickley/trieste">download the source from GitHub</a>.</p>
+<h2 id="details">Details</h2>
+<p>Trieste files are intended to contain archival data. Once written, they are not intended to be modified—only read. They can store $N$-dimensional arrays, tables, and collections of arrays or tables. Every array, table, and collection has a <strong>name</strong> and contains a <strong>metadata dictionary</strong> (a map data structure) that can be augmented by the file’s author to provide documentation regarding the content of each object stored in the file, as well as instructions on using the data in the file. The goal is to provide the person reading the file with as much documentation and forensic information as possible about the file’s contents and the process by which the file was created.</p>
+<p>The current prototype of Trieste (version $0$.$1$.x) is a Python-specific format consisting of a specially-formatted, compressed NumPy <code>.npz</code> file in which every data object (NumPy <code>array</code>) has a corresponding metadata dictionary. Some of the metadata attributes are automatically added. Others, such as documentation strings (comments $/$ READMEs) and object names, are strongly encouraged, but can be left empty. The automatically-added metadata are intended for software version compatibility checks and record-keeping $/$ traceability. For example, the following are automatically added to the metadata:</p>
+<ul>
+<li>The versions of NumPy, Python, and the Trieste module that were used to generate the file.</li>
+<li>The OS, platform, and CPU architecture with which the file was created.</li>
+<li>The file’s creation time $/$ date.</li>
+<li>The username under which the file was created.</li>
+<li>The hostname of the system on which the file was created.</li>
+<li>The path to the active directory on the host machine when the file was created.</li>
+<li>Finally, <strong>If the file is generated within an IPython session or Jupyter notebook session, the command history of the session is also stored, as a string.</strong></li>
+</ul>
+<p>In this module, there are $2$ primary stand-alone functions:</p>
+<ol style="list-style-type: decimal">
+<li><p><code>load()</code>: for loading a Trieste file from the file system.</p></li>
+<li><p><code>save()</code>: for saving a Trieste file to the file system.</p></li>
+</ol>
+<p>There are $4$ classes:</p>
+<ol style="list-style-type: decimal">
+<li><p><code>Array</code>: for storing $N$-dimensional arrays.</p></li>
+<li><p><code>Table</code>: for storing Arrays with labeled columns of potentially different data types (analogous with a spreadsheet, ASCII table, or database table).</p></li>
+<li><p><code>Collection</code>: for storing multiple <code>Array</code> or <code>Table</code> objects. Collections are only allowed to store a single type of object. For example, a collection can store multiple $2$<code class="ptxt">-</code>$D$ <code>Array</code> objects (like layers of an image) or multiple <code>Table</code> objects, but not a <code>Table</code> <em>and</em> an <code>Array</code>. Furthermore, the names of the objects in a <code>Collection</code> must be unique. This allows <code>Collection</code> objects to be indexed using the name of the object, so the syntax <code>collection['red']</code> can be used to access the object in the collection whose name is <code>red</code>. <code>Collection</code> objects are also ordered containers, which means that they can be indexed by position, with an integer subscript, as in <code>collection[3]</code>. <code>Collection</code> objects are iterable, so that the syntax <code>for object in collection:</code> can be used to iterate through the contents.</p></li>
+<li><p><code>File</code>: for interfacing with a file, after the file has been loaded.</p>
+<p>There are two types of files, in general:</p>
+<ul>
+<li>files containing one object</li>
+<li>files containing multiple objects</li>
+</ul>
+<p>When loading a file containing only one object, the <code>load</code> function constructs the object itself (i.e., an instance of <code>Array</code>, <code>Table</code>, or <code>Collection</code>). When a file containing multiple objects is loaded, a <code>File</code> instance is created. Just like <code>Collection</code> objects, <code>File</code> objects are iterable and can be indexed by object name or position.</p></li>
+</ol>
+<h2 id="future-plans">Future Plans</h2>
+<p>The $0$.$1$.x series of Trieste is intended to test the basic ideas and the basic interface. It is a Python-specific file format which relies heavily upon the data serialization provided by NumPy, which uses Python’s Pickle.</p>
+<p>If there is sufficient interest in the $0$.$1$.x series, then a version $0$.$2$.x branch will be opened to explore generalizing Trieste so that the file format can be written and read using a broad variety of programming languages, Currently, it appears that <a href="https://msgpack.org/">MessagePack</a> would be the best serialization format for this purpose.</p>
+</body>
+</html>

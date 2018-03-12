@@ -1,0 +1,140 @@
+# Introducing Trieste
+
+Trieste is a data interchange and archive format that facilitates documentation
+of data, data provenance tracking, and forensic analysis. If any of the following
+scenarios sound vaguely familiar, you may benefit from using Trieste:
+
+```{.note}
+### Scenario I
+
+While rushing to meet the deadline, you need to send some data to a colleague.
+You quickly make an ASCII file containing the requested data, using an interactive
+Python session (IPython). You don't expect that you will need to create
+a similar table in the foreseeable future, and you are *rushing*, so you
+don't take the time to write a script to automate the process. You simply send the file and
+forget about it. A few months later, you need to create a similar table from
+slightly different input data. You wish that you had at taken some notes,
+regarding how you produced the table so that you didn't have to start over from scratch.
+
+```
+
+```{.note}
+### Scenario II
+
+A colleague sends you a FITS file containing data that you would like to use. The
+file was created by your colleague's friend, who received the file from someone else,
+but he can't remember who created the file originally. You have been told that the
+file was originally part of a larger set of files, which included some documentation,
+but the documentation has evidently been lost. You spend a great deal of time inspecting
+the content of the FITS file in order to understand it. You would like to ask the
+file's creator a question, but you can't.
+```
+
+```{.note}
+### Scenario III
+
+You need to produce thousands of multi-layer images of varying size and would like to
+put all of the images into a single file. You are frustrated because FITS doesn't
+allow you to easily group sets of extensions. The layers of each image consist of
+different data types (64 bit floats and 32 bit integers) and the different layers
+have different metadata, so storing the images in multi-dimensional arrays within a
+FITS file won't work. Furthermore, you don't want to store thousands
+of FITS files in a .zip or .tar file because it is highly inconvenient for the
+recipient of the files to manually extract the data and then load it. This approach
+would also tax the file system because thousands of individual files would
+need to be created each time a new zip archive is loaded. You have heard that the
+HDF5 format could handle your use-case, but you would have to learn to create HDF5 files and
+explain to the recipient how to load the files. There must be a better way to do this!
+```
+
+## Examples
+
+Here are some examples to illustrate what Trieste is and what it does:
+
+* [Example I: General Usage](./examples/Trieste-General-Demo.html){target='_blank'}
+* [Example II: Collections](./examples/Collection-demo.html){target='_blank'}
+* [Example III: Storing Many FITS Images](./examples/Trieste-Collection-Storing-FITS-files.html){target='_blank'}
+
+
+## Installing Trieste
+
+The easiest way to install Trieste is by using `pip`:
+
+```{.bash}
+$ pip install trieste
+```
+
+Note that Trieste will only work with Python 3.6 or newer. If you have multiple
+Python installations, you may have to specify `pip3.6`:
+
+```{.bash}
+$ pip3.6 install trieste
+```
+
+You can also [download the source from GitHub](https://github.com/nrstickley/trieste).
+
+## Details
+
+Trieste files are intended to contain archival data. Once written, they are not intended to be modified---only read.
+They can store N-dimensional arrays, tables, and collections of arrays or tables. Every array, table, and
+collection has a **name** and contains a **metadata dictionary** (a map data structure) that can be augmented by the
+file's author to provide documentation regarding the content of each object stored in the file, as well as instructions
+on using the data in the file. The goal is to provide the person reading the file with as much documentation and
+forensic information as possible about the file's contents and the process by which the file was created.
+
+The current prototype of Trieste (version 0.1.x) is a Python-specific format consisting of a specially-formatted, compressed NumPy `.npz`
+file in which every data object (NumPy `array`) has a corresponding metadata dictionary. Some of the metadata attributes
+are automatically added. Others, such as documentation strings (comments / READMEs) and object names, are strongly
+encouraged, but can be left empty. The automatically-added metadata are intended for software version compatibility
+checks and record-keeping / traceability. For example, the following are automatically added to the metadata:
+
+   * The versions of NumPy, Python, and the Trieste module that were used to generate the file.
+   * The OS, platform, and CPU architecture with which the file was created.
+   * The file's creation time / date.
+   * The username under which the file was created.
+   * The hostname of the system on which the file was created.
+   * The path to the active directory on the host machine when the file was created.
+   * Finally, **If the file is generated within an IPython session or Jupyter notebook session, the command history of the
+     session is also stored, as a string.**
+
+In this module, there are 2 primary stand-alone functions:
+
+1) `load()`: for loading a Trieste file from the file system.
+
+2) `save()`: for saving a Trieste file to the file system.
+
+There are 4 classes:
+
+1) `Array`: for storing N-dimensional arrays.
+
+2) `Table`: for storing Arrays with labeled columns of potentially different data types (analogous with a spreadsheet,
+    ASCII table, or database table).
+
+3) `Collection`: for storing multiple `Array` or `Table` objects. Collections are only allowed to store a single type
+    of object. For example, a collection can store multiple 2-D `Array` objects (like layers of an image) or multiple `Table` objects,
+    but not a `Table` *and* an `Array`. Furthermore, the names of the objects in a `Collection` must be unique.
+    This allows `Collection` objects to be indexed using the name of the object, so the syntax
+    `collection['red']` can be used to access the object in the collection whose name is `red`. `Collection` objects are also
+    ordered containers, which means that they can be indexed by position, with an integer subscript, as in
+    `collection[3]`. `Collection` objects are iterable, so that the syntax `for object in collection:` can be used to iterate
+    through the contents.
+
+4) `File`: for interfacing with a file, after the file has been loaded.
+
+    There are two types of files, in general:
+
+    * files containing one object
+    * files containing multiple objects
+
+    When loading a file containing only one object, the `load` function constructs the object itself (i.e., an instance
+    of `Array`, `Table`, or `Collection`). When a file containing multiple objects is loaded, a `File` instance is
+    created. Just like `Collection` objects, `File` objects are iterable and can be indexed by object name or position.
+
+## Future Plans
+
+  The 0.1.x series of Trieste is intended to test the basic ideas and the basic interface. It is a Python-specific
+  file format which relies heavily upon the data serialization provided by NumPy, which uses Python's Pickle.
+
+  If there is sufficient interest in the 0.1.x series, then a version 0.2.x branch will be opened to explore generalizing
+  Trieste so that the file format can be written and read using a broad variety of programming languages, Currently, it appears
+  that [MessagePack](https://msgpack.org/) would be the best serialization format for this purpose.
